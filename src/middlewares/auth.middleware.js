@@ -1,15 +1,7 @@
-const fastifyJwt = require('@fastify/jwt');
-
-module.exports = (fastify) => {
-  fastify.register(fastifyJwt, {
-    secret: process.env.JWT_SECRET,
-  });
-
-  return async function (request, reply) {
-    try {
+module.exports = async (request, reply) => {
+  try {
       await request.jwtVerify();
-    } catch (err) {
-      reply.send(err);
-    }
-  };
+  } catch (err) {
+      reply.code(401).send({ error: 'Unauthorized' });
+  }
 };
