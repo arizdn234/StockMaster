@@ -1,4 +1,3 @@
-// src/routes/itemRoutes.js
 const itemController = require('../controllers/item.controller');
 const authMiddleware = require('../middlewares/auth.middleware');
 
