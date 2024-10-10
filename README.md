@@ -24,8 +24,12 @@ StockMaster is a simple and efficient inventory management application built wit
 .
 ├── src
 │   ├── controllers
+│   ├── db
+│   ├── middlewares
+│   ├── migrations
 │   ├── models
 │   ├── routes
+│   ├── seeds
 │   └── app.js
 ├── knexfile.js
 ├── .env
@@ -37,7 +41,7 @@ StockMaster is a simple and efficient inventory management application built wit
 
 To run this application, you will need:
 
-- **Node.js**: v12 or later
+- **Node.js**: v20.18.0 or later
 - **MySQL**: Running MySQL server for database management
 
 ## Installation
@@ -84,16 +88,18 @@ CREATE TABLE items (
 CREATE TABLE transactions (
   id INT AUTO_INCREMENT PRIMARY KEY,
   item_id INT,
-  change_amount INT,
-  type ENUM('IN', 'OUT'),
+  quantity_change INT,
+  total_value FLOAT,
+  type VARCHAR(255),
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (item_id) REFERENCES items(id) ON DELETE CASCADE
 );
 
-CREATE TABLE admin (
+CREATE TABLE users (
   id INT AUTO_INCREMENT PRIMARY KEY,
   username VARCHAR(255) UNIQUE NOT NULL,
   password VARCHAR(255) NOT NULL,
+  role VARCHAR(255) NOT NULL DEFAULT "admin",
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 ```
@@ -112,31 +118,31 @@ The app will be running on `http://localhost:8787`.
 
 ### Authentication
 
-- **POST /register**  
-  Register a new admin.  
+- **POST `/auth/register`**  
+  Register a new user admin.  
   Request body: `{ "username": "admin", "password": "password" }`
 
-- **POST /login**  
+- **POST `/auth/login`**  
   Admin login and receive a JWT token.  
   Request body: `{ "username": "admin", "password": "password" }`  
   Response: `{ "token": "your_jwt_token" }`
 
 ### Items
 
-- **POST /items**  
+- **POST `/items/`**  
   Add a new item.  
   Request body: `{ "name": "item1", "category": "category1", "stock": 10, "price": 100 }`
 
-- **PUT /items/:id**  
+- **PUT `/items/:id`**  
   Update an existing item.  
   Request body: `{ "name": "item2", "category": "category2", "stock": 15, "price": 120 }`
 
-- **POST /items/:id/reduce-stock**  
+- **POST `/items/:id/reduce-stock`**  
   Reduce the stock of an item.  
   Request body: `{ "amount": 5 }`
 
-- **GET /inventory-value**  
-  Get the total inventory value.
+- **GET `/items`**  
+  Get the entire inventory value.
 
 ### Transactions
 
